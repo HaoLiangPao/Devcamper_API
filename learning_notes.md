@@ -168,7 +168,34 @@ npm i -D nodemon
    4. Monitor the server activities
       1. `pm2 logs` : check the real-time logs
       2. `pm2 status` : check the server status
+4. Use NGINX to set up a simple firewall
+   1. Install NGINX
+      1. `apt install nginx`
+   2. Set up simple firewall
+      1. `ufw status`: check current status
+      2. `ufw enable`: set up firewall
+         1. `ufw allow ssh`: Add 22 port back
+         2. `ufw allow http`: Add 80 port back
+         3. `ufw allow https`: Add 443 port back
+5. Add reverse proxy
+   1. `sudo nano /etc/nginx/sites-available/default`: edit the configer file for server
+   2. Add following to the server block
+      ```
+      server_name yourdomain.com www.yourdomain.com;
 
+       location / {
+           proxy_pass http://localhost:5000; #whatever port your app runs on
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+      ```
+    3. Check NGINX config
+       1. `sudo nginx -t`
+    4. Restart NGINX
+       1. `sudo service nginx restart`
 ---
 
 ## Problem:
